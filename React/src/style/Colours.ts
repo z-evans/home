@@ -1,25 +1,13 @@
-export default {
+const Colours = {
   transparent: "#FFFFFF00",
   default: {
-    black: "#000",
-    superLightGrey: "#f5f5f5",
-    feintGrey: "#b5b5b5",
-    lightGrey: "#616266",
-    lighterGrey: "#d3d5e0",
-    lightestGrey: "#ccc",
-    grey: "#727272",
-    darkGrey: "#444447",
-    cyan: "#37c0fb",
-    white: "#f7f7f7",
-    purewhite: "#fff",
-    lightTeal: "#68acae",
-    teal: "#00788E",
-    red: "#f00",
-    darkred: "#8E1500",
-    purple: "#572582",
-    yellow: "#f0c118",
-    darkYellow: "#5d552d",
-    saintTropazBlue: "#224f8a",
-    lightYellow: "#ffedab",
-  }
+    white: "#FFF",
+    timberwolf: "#d3d0cb",
+    onyx: "#393e41",
+    maizeCrayola: "#e2c044",
+    ming: "#587b7f",
+    darkJungleGreen: "#1e2019",
+  },
 };
+
+export default Colours;

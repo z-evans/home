@@ -29,6 +29,14 @@ class UserManager {
     }
   }
 
+  async register(data: UserProps) {
+    const user = await this.findByEmail(data.email);
+    if (!user) {
+    } else {
+      throw "";
+    }
+  }
+
   async findByEmail(email: string) {
     return User.findOne({
       where: {

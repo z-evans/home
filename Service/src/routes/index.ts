@@ -9,6 +9,6 @@ IndexRouter.get("/", function (req, res, next) {
 });
 
 IndexRouter.use(`/user`, UserRouter);
-IndexRouter.use("/file", FileRouter);
+IndexRouter.use("/files", FileRouter);
 
 export default IndexRouter;
