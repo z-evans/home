@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   BrowserRouter as Router,
   Switch,
@@ -11,19 +12,18 @@ import FilesIndex from "./pages/files/Index";
 import LoginPage from "./pages/Login";
 import RegisterPage from "./pages/Register";
 import Authentication from "./routing/Authentication";
+import PrivateRoute from "./routing/PrivateRoute";
+import { useMountEffect } from "./util/hooks";
 
 export interface SubRouteProps {
   match: match;
 }
 
 const AuthRoute: React.FunctionComponent<SubRouteProps> = ({ match }) => (
-  <Authentication
-    redirect={URLs.PAGE.Login}
-    request={async () => await AuthenticationManager.isAuth()}
-  >
+  <>
     <Route exact path={`${match.path}/files`} component={FilesIndex} />
     <Route exact path={`${match.path}`} component={Dashboard} />
-  </Authentication>
+  </>
 );
 
 function Routes() {
@@ -32,7 +32,9 @@ function Routes() {
       <Switch>
         <Route exact path={URLs.PAGE.Login} component={LoginPage} />
         <Route exact path={URLs.PAGE.Register} component={RegisterPage} />
-        <Route path={URLs.PAGE.Dashboard.Home} component={AuthRoute} />
+        <Authentication redirect={URLs.PAGE.Login}>
+          <Route path={URLs.PAGE.Dashboard.Home} component={AuthRoute} />
+        </Authentication>
       </Switch>
     </Router>
   );

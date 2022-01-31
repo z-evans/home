@@ -1,9 +1,10 @@
 import * as React from "react";
 import { useState } from "react";
 import { Redirect } from "react-router-dom";
+import AuthenticationManager from "../managers/AuthenticationManager";
+import { useMountEffect } from "../util/hooks";
 
 interface AuthenticationProps {
-  request: () => Promise<boolean>;
   children: React.ReactNode;
   redirect: string;
 }
@@ -14,7 +15,6 @@ interface AuthenticationComponentState {
 }
 
 const Authentication = ({
-  request,
   children,
   redirect,
 }: AuthenticationProps): JSX.Element => {
@@ -24,15 +24,16 @@ const Authentication = ({
     authenticated: false,
   });
 
-  if (!state.requestSent) {
-    request().then((result) => {
-      setState({
-        requestSent: true,
-        loaded: true,
-        authenticated: result,
-      });
+  const onLoad = async () =>
+    setState({
+      requestSent: true,
+      loaded: true,
+      authenticated: await AuthenticationManager.isAuth(),
     });
-  }
+
+  useMountEffect(() => {
+    onLoad();
+  });
 
   return state.loaded ? (
     <> {state.authenticated ? children : <Redirect to={redirect} />} </>
