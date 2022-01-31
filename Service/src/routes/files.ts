@@ -7,7 +7,7 @@ import { FilesGet } from "../types/Files";
 const FileRouter = express.Router();
 
 /* GET home page. */
-FileRouter.post("/", async function (req, res, next) {
+FileRouter.put("/", async function (req, res, next) {
   let dir = "/";
 
   const form = formidable({
@@ -39,7 +39,7 @@ FileRouter.post("/", async function (req, res, next) {
   });
 });
 
-FileRouter.get("/", async function (req, res, next) {
+FileRouter.post("/", async function (req, res, next) {
   const data = req.body as FilesGet;
   const path = `${URLs.DIR.User(0)}${data.dir}`;
   res.json(FileManager.list(path));

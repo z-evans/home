@@ -21,6 +21,9 @@ const URLs = {
         Auth: `${defaultPath}/user`,
         Login: `${defaultPath}/user/login`,
       },
+      Files: {
+        Info: `${defaultPath}/files`,
+      },
     },
   },
 };

@@ -1,3 +1,4 @@
+import fastFolderSizeSync = require("fast-folder-size/sync");
 import { readdirSync, statSync } from "fs";
 import { parse } from "path";
 import { Explorer } from "../types/Files";
@@ -12,7 +13,7 @@ class FileManager {
         const stats = statSync(dir + "/" + d);
         return {
           name: d,
-          size: stats.size,
+          size: fastFolderSizeSync(dir + "/" + d),
           date: stats.mtime,
         };
       }),

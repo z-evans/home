@@ -1,12 +1,15 @@
 import React, { useReducer } from "react";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import Form from "../components/inputs/Form";
 import Textbox from "../components/inputs/Textbox";
+import URLs from "../data/URLs";
 import AuthenticationManager from "../managers/AuthenticationManager";
 import Colours from "../style/Colours";
 import { loginReducer, SollomonState, LoginActions } from "../types/login";
 
 const LoginPage = () => {
+  const history = useHistory();
   const [state, dispatch] = useReducer(loginReducer, {
     email: "",
     password: "",
@@ -16,7 +19,10 @@ const LoginPage = () => {
     <Component
       state={state}
       dispatch={dispatch}
-      onSubmit={() => AuthenticationManager.login(state)}
+      onSubmit={() => {
+        AuthenticationManager.login(state);
+        history.push(URLs.PAGE.Dashboard.Home);
+      }}
     />
   );
 };

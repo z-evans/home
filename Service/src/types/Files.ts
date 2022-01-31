@@ -2,7 +2,7 @@ export interface FilesGet {
   dir: string;
 }
 
-export interface Item {
+export interface ExplorerItem {
   name: string;
   extention?: string;
   size: number;
@@ -10,6 +10,6 @@ export interface Item {
 }
 
 export interface Explorer {
-  directories: Item[];
-  files: Item[];
+  directories: ExplorerItem[];
+  files: ExplorerItem[];
 }

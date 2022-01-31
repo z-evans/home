@@ -5,5 +5,5 @@ export default {
     pass: "",
     database: "roblox",
   },
-  files: "C:\\files",
+  files: "D:\\files",
 };
