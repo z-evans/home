@@ -8,6 +8,10 @@ class DataManager {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
   }
 
+  getPath(s: string) {
+    return s.substring(0, s.lastIndexOf("/"));
+  }
+
   nFormatter(num: number) {
     const lookup = [
       { value: 1, symbol: "" },

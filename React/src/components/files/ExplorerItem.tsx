@@ -8,16 +8,20 @@ import { DirectoryItem } from "../../types/files";
 interface Props {
   data: DirectoryItem;
   type: "Directory" | "File";
+  onClick: (path: string) => void;
 }
 
-const ExplorerItem: React.FC<Props> = ({ data, type }) => (
-  <StyledExplorerItem>
+const ExplorerItem: React.FC<Props> = ({ data, type, onClick }) => (
+  <StyledExplorerItem onClick={() => onClick(data.name)}>
     <div>
       <FontAwesomeIcon
         className="icon"
         icon={type == "Directory" ? faFolder : faFile}
       />
-      <span className="name">{data.name}</span>
+      <span className="name">
+        {data.name}
+        {type == "File" && data.extention}
+      </span>
     </div>
     <div>
       <span className="size">{DataManager.formatBytes(data.size, 1)}</span>

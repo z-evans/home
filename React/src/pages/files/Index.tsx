@@ -1,15 +1,22 @@
 import { faFolder } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
+import { fileURLToPath } from "url";
 import ExplorerItem from "../../components/files/ExplorerItem";
+import FileUpload from "../../components/inputs/FileUpload";
 import DefaultScreen from "../../components/layouts/DefaultScreen";
 import FileManager from "../../managers/FileManager";
-import { FileActions, fileReducer, FileState } from "../../types/files";
+import {
+  DropzoneFile,
+  FileActions,
+  fileReducer,
+  FileState,
+} from "../../types/files";
 import { useMountEffect } from "../../util/hooks";
 
 const FilesIndex = () => {
   const [state, dispatch] = useReducer(fileReducer, {
-    path: "/home",
+    path: "/",
     recentFiles: [],
     explorer: {
       directories: [],
@@ -20,7 +27,7 @@ const FilesIndex = () => {
   const loadData = async () =>
     dispatch({
       type: "SET_EXPLORER",
-      payload: await FileManager.getFiles("/"),
+      payload: await FileManager.getFiles(state.path),
     });
 
   console.log(state);
@@ -29,15 +36,30 @@ const FilesIndex = () => {
     loadData();
   });
 
-  return <Component state={state} dispatch={dispatch} />;
+  useEffect(() => {
+    loadData();
+  }, [state.path]);
+
+  return (
+    <Component
+      state={state}
+      dispatch={dispatch}
+      onUpload={async (files) => {
+        console.log(files);
+        await FileManager.putFiles(files, state.path);
+        // need to wait for loadData();
+      }}
+    />
+  );
 };
 
 interface Props {
   state: FileState;
   dispatch: React.Dispatch<FileActions>;
+  onUpload: (files: File[]) => void;
 }
 
-const Component: React.FC<Props> = ({ state, dispatch }) => {
+const Component: React.FC<Props> = ({ state, dispatch, onUpload }) => {
   return (
     <DefaultScreen>
       <div>{state.path}</div>
@@ -48,12 +70,28 @@ const Component: React.FC<Props> = ({ state, dispatch }) => {
       </div>
       <div>
         {state.explorer.directories.map((d) => (
-          <ExplorerItem data={d} type="Directory" />
+          <ExplorerItem
+            data={d}
+            type="Directory"
+            onClick={(e) =>
+              dispatch({
+                type: "SET_PATH",
+                payload: state.path + "/" + e,
+              })
+            }
+          />
         ))}
         {state.explorer.files.map((d) => (
-          <ExplorerItem data={d} type="File" />
+          <ExplorerItem
+            data={d}
+            type="File"
+            onClick={() => {
+              //
+            }}
+          />
         ))}
       </div>
+      <FileUpload onSelect={onUpload} />
     </DefaultScreen>
   );
 };

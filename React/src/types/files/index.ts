@@ -3,6 +3,10 @@ export interface FileActions {
   payload: string | File[] | Explorer;
 }
 
+export interface DropzoneFile extends File {
+  path: string;
+}
+
 export interface DirectoryItem {
   name: string;
   extention?: string;

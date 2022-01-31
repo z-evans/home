@@ -25,6 +25,9 @@ const URLs = {
         Info: `${defaultPath}/files`,
       },
     },
+    PUT: {
+      Files: `${defaultPath}/files`,
+    },
   },
 };
 

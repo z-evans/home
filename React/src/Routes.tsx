@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   BrowserRouter as Router,
   Switch,
@@ -6,14 +5,11 @@ import {
   match,
 } from "react-router-dom";
 import URLs from "./data/URLs";
-import AuthenticationManager from "./managers/AuthenticationManager";
 import Dashboard from "./pages/Dashboard";
 import FilesIndex from "./pages/files/Index";
 import LoginPage from "./pages/Login";
 import RegisterPage from "./pages/Register";
 import Authentication from "./routing/Authentication";
-import PrivateRoute from "./routing/PrivateRoute";
-import { useMountEffect } from "./util/hooks";
 
 export interface SubRouteProps {
   match: match;
