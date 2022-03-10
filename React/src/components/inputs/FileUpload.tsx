@@ -14,12 +14,12 @@ const FileUpload: React.FC<Props> = ({ onSelect, ...props }) => {
 
   return (
     <StyledFileInput {...getRootProps()}>
-      <input {...getInputProps()} />
-      {isDragActive ? (
+      {props.children}
+      {/* {isDragActive ? (
         <p>Drop the files here ...</p>
       ) : (
         <p>Drag 'n' drop some files here, or click to select files</p>
-      )}
+      )} */}
     </StyledFileInput>
   );
 };
@@ -29,5 +29,4 @@ export default FileUpload;
 const StyledFileInput = styled("div")`
   border: 1px solid ${Colours.default.ming};
   padding: 2em;
-  cursor: pointer;
 `;

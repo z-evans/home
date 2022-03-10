@@ -10,9 +10,13 @@ UserRouter.get("/", async function (req, res, next) {
 
 UserRouter.post("/login", async function (req, res, next) {
   const data = req.body as UserProps;
-  const user = await UserManager.get(data);
-  req.session.user = user;
-  res.send();
+  try {
+    const user = await UserManager.get(data);
+    req.session.user = user;
+    res.send();
+  } catch (e) {
+    res.status(400).send(e);
+  }
 });
 
 UserRouter.post("/register", async function (req, res, next) {

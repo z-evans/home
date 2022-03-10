@@ -17,6 +17,8 @@ import { useMountEffect } from "../../util/hooks";
 const FilesIndex = () => {
   const [state, dispatch] = useReducer(fileReducer, {
     path: "/",
+    uploading: false,
+    progress: 0,
     recentFiles: [],
     explorer: {
       directories: [],
@@ -45,9 +47,33 @@ const FilesIndex = () => {
       state={state}
       dispatch={dispatch}
       onUpload={async (files) => {
-        console.log(files);
-        await FileManager.putFiles(files, state.path);
-        // need to wait for loadData();
+        dispatch({
+          type: "SET_UPLOADING",
+          payload: true,
+        });
+
+        let size = 0;
+        files.forEach((e) => (size += e.size));
+        await FileManager.putFiles(files, state.path, size, (p) => {
+          const progress = (p / size) * 100;
+          if (progress >= 100) {
+            dispatch({
+              type: "SET_UPLOADING",
+              payload: false,
+            });
+            dispatch({
+              type: "SET_PROGRESS",
+              payload: 0,
+            });
+          } else {
+            dispatch({
+              type: "SET_PROGRESS",
+              payload: progress > 100 ? 100 : progress,
+            });
+          }
+        });
+
+        setTimeout(() => loadData(), 1000);
       }}
     />
   );
@@ -68,7 +94,8 @@ const Component: React.FC<Props> = ({ state, dispatch, onUpload }) => {
           // Recent Files
         }
       </div>
-      <div>
+      <FileUpload onSelect={onUpload}>
+        {state.uploading && state.progress}
         {state.explorer.directories.map((d) => (
           <ExplorerItem
             data={d}
@@ -90,8 +117,7 @@ const Component: React.FC<Props> = ({ state, dispatch, onUpload }) => {
             }}
           />
         ))}
-      </div>
-      <FileUpload onSelect={onUpload} />
+      </FileUpload>
     </DefaultScreen>
   );
 };
