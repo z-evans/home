@@ -8,7 +8,7 @@ interface Props {
 }
 
 const FileUpload: React.FC<Props> = ({ onSelect, ...props }) => {
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps } = useDropzone({
     onDrop: (acceptedFiles) => onSelect(acceptedFiles),
   });
 

@@ -7,7 +7,12 @@ import DataManager from "./DataManager";
 type Progress = (p: number) => void;
 
 class FileManager {
-  async getFiles(path: string): Promise<Explorer> {
+  mergePath(path: string[]) {
+    return "/" + path.join("/");
+  }
+
+  async getFiles(p: string[]): Promise<Explorer> {
+    const path = this.mergePath(p);
     return (
       await axios.post<Explorer>(
         URLs.API.GET.Files.Info,
@@ -18,12 +23,8 @@ class FileManager {
       )
     ).data;
   }
-  async putFiles(
-    files: File[],
-    dir: string,
-    s: number,
-    p: Progress
-  ): Promise<void> {
+  async putFiles(files: File[], d: string[], p: Progress): Promise<void> {
+    const dir = this.mergePath(d);
     let size = 0;
 
     files.forEach(async (f) => {
@@ -35,7 +36,7 @@ class FileManager {
       await axios.put(URLs.API.PUT.Files, formData, {
         ...formAxiosConfig,
         onUploadProgress: (data) => {
-          if (data.loaded == data.total) {
+          if (data.loaded === data.total) {
             uploading = false;
             size += data.total;
             p(size);

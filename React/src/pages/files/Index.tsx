@@ -1,22 +1,17 @@
-import { faFolder } from "@fortawesome/free-solid-svg-icons";
+import { faHome } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useReducer } from "react";
-import { fileURLToPath } from "url";
+import styled from "styled-components";
 import ExplorerItem from "../../components/files/ExplorerItem";
 import FileUpload from "../../components/inputs/FileUpload";
 import DefaultScreen from "../../components/layouts/DefaultScreen";
 import FileManager from "../../managers/FileManager";
-import {
-  DropzoneFile,
-  FileActions,
-  fileReducer,
-  FileState,
-} from "../../types/files";
+import { FileActions, fileReducer, FileState } from "../../types/files";
 import { useMountEffect } from "../../util/hooks";
 
 const FilesIndex = () => {
   const [state, dispatch] = useReducer(fileReducer, {
-    path: "/",
+    path: [],
     uploading: false,
     progress: 0,
     recentFiles: [],
@@ -54,7 +49,7 @@ const FilesIndex = () => {
 
         let size = 0;
         files.forEach((e) => (size += e.size));
-        await FileManager.putFiles(files, state.path, size, (p) => {
+        await FileManager.putFiles(files, state.path, (p) => {
           const progress = (p / size) * 100;
           if (progress >= 100) {
             dispatch({
@@ -88,7 +83,32 @@ interface Props {
 const Component: React.FC<Props> = ({ state, dispatch, onUpload }) => {
   return (
     <DefaultScreen>
-      <div>{state.path}</div>
+      <DirectoryBar>
+        <a>
+          <FontAwesomeIcon
+            onClick={() =>
+              dispatch({
+                type: "SET_PATH",
+                payload: [],
+              })
+            }
+            icon={faHome}
+          />
+        </a>
+        {state.path.map((e, i) => (
+          <a
+            className="path"
+            onClick={() =>
+              dispatch({
+                type: "SET_PATH",
+                payload: state.path.slice(0, i + 1),
+              })
+            }
+          >
+            {e}
+          </a>
+        ))}
+      </DirectoryBar>
       <div>
         {
           // Recent Files
@@ -103,7 +123,7 @@ const Component: React.FC<Props> = ({ state, dispatch, onUpload }) => {
             onClick={(e) =>
               dispatch({
                 type: "SET_PATH",
-                payload: state.path + "/" + e,
+                payload: [...state.path, e],
               })
             }
           />
@@ -123,3 +143,13 @@ const Component: React.FC<Props> = ({ state, dispatch, onUpload }) => {
 };
 
 export default FilesIndex;
+
+const DirectoryBar = styled("div")`
+  padding: 0.5em;
+  a {
+    cursor: pointer;
+  }
+  a.path {
+    margin-left: 1em;
+  }
+`;

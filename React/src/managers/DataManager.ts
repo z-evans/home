@@ -1,6 +1,6 @@
 class DataManager {
   formatBytes(bytes: number, decimals: number) {
-    if (bytes == 0) return "0 Bytes";
+    if (bytes === 0) return "0 Bytes";
     var k = 1024,
       dm = decimals || 2,
       sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],

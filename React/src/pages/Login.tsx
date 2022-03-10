@@ -19,8 +19,8 @@ const LoginPage = () => {
     <Component
       state={state}
       dispatch={dispatch}
-      onSubmit={() => {
-        AuthenticationManager.login(state);
+      onSubmit={async () => {
+        await AuthenticationManager.login(state);
         history.push(URLs.PAGE.Dashboard.Home);
       }}
     />

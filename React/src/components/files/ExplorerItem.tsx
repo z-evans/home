@@ -1,9 +1,11 @@
 import { faFile, faFolder } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRef } from "react";
 import styled from "styled-components";
 import DataManager from "../../managers/DataManager";
 import Colours from "../../style/Colours";
 import { DirectoryItem } from "../../types/files";
+import ContextMenu from "../ContextMenu";
 
 interface Props {
   data: DirectoryItem;
@@ -11,16 +13,38 @@ interface Props {
   onClick: (path: string) => void;
 }
 
-const ExplorerItem: React.FC<Props> = ({ data, type, onClick }) => (
-  <StyledExplorerItem onClick={() => onClick(data.name)}>
+const ExplorerItem: React.FC<Props> = ({ ...props }) => {
+  const contextRef = useRef<HTMLDivElement>(null);
+
+  return <ExplorerItemComponent contextRef={contextRef} {...props} />;
+};
+
+interface Component extends Props {
+  contextRef: React.RefObject<HTMLDivElement>;
+}
+
+const ExplorerItemComponent: React.FC<Component> = ({
+  contextRef,
+  data,
+  type,
+  onClick,
+}) => (
+  <StyledExplorerItem
+    ref={contextRef}
+    onContextMenu={(e) => {
+      e.preventDefault();
+    }}
+    onClick={() => onClick(data.name)}
+  >
+    <ContextMenu contextRef={contextRef} />
     <div>
       <FontAwesomeIcon
         className="icon"
-        icon={type == "Directory" ? faFolder : faFile}
+        icon={type === "Directory" ? faFolder : faFile}
       />
       <span className="name">
         {data.name}
-        {type == "File" && data.extention}
+        {type === "File" && data.extention}
       </span>
     </div>
     <div>
