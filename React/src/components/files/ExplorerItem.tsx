@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRef } from "react";
 import styled from "styled-components";
 import DataManager from "../../managers/DataManager";
+import FileManager from "../../managers/FileManager";
 import Colours from "../../style/Colours";
 import { DirectoryItem } from "../../types/files";
 import ContextMenu from "../ContextMenu";
@@ -10,6 +11,7 @@ import ContextMenu from "../ContextMenu";
 interface Props {
   data: DirectoryItem;
   type: "Directory" | "File";
+  path: string;
   onClick: (path: string) => void;
 }
 
@@ -27,32 +29,38 @@ const ExplorerItemComponent: React.FC<Component> = ({
   contextRef,
   data,
   type,
+  path,
   onClick,
-}) => (
-  <StyledExplorerItem
-    ref={contextRef}
-    onContextMenu={(e) => {
-      e.preventDefault();
-    }}
-    onClick={() => onClick(data.name)}
-  >
-    <ContextMenu contextRef={contextRef} />
-    <div>
-      <FontAwesomeIcon
-        className="icon"
-        icon={type === "Directory" ? faFolder : faFile}
+}) => {
+  const fileName = `${data.name}${type === "File" ? data.extention : ""}`;
+  return (
+    <>
+      <ContextMenu
+        contextRef={contextRef}
+        onDownload={() => FileManager.download(path + "/" + fileName, fileName)}
       />
-      <span className="name">
-        {data.name}
-        {type === "File" && data.extention}
-      </span>
-    </div>
-    <div>
-      <span className="size">{DataManager.formatBytes(data.size, 1)}</span>
-      <span className="date">{data.date}</span>
-    </div>
-  </StyledExplorerItem>
-);
+      <StyledExplorerItem
+        ref={contextRef}
+        onContextMenu={(e) => {
+          e.preventDefault();
+        }}
+        onClick={() => onClick(data.name)}
+      >
+        <div>
+          <FontAwesomeIcon
+            className="icon"
+            icon={type === "Directory" ? faFolder : faFile}
+          />
+          <span className="name">{fileName}</span>
+        </div>
+        <div>
+          <span className="size">{DataManager.formatBytes(data.size, 1)}</span>
+          <span className="date">{data.date}</span>
+        </div>
+      </StyledExplorerItem>
+    </>
+  );
+};
 
 export default ExplorerItem;
 

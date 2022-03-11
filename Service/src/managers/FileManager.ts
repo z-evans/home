@@ -1,6 +1,8 @@
+import archiver = require("archiver");
 import fastFolderSizeSync = require("fast-folder-size/sync");
-import { readdirSync, statSync } from "fs";
+import { createWriteStream, readdirSync, statSync } from "fs";
 import { parse } from "path";
+import URLs from "../data/URLs";
 import { Explorer } from "../types/Files";
 
 class FileManager {
@@ -28,6 +30,25 @@ class FileManager {
         };
       }),
     };
+  }
+  zip(path: string): Promise<string> {
+    const zip = `${URLs.DIR.Temp}/0.zip`;
+
+    return new Promise(async (resolve) => {
+      const output = createWriteStream(zip);
+      const archive = archiver("zip", {
+        zlib: { level: 9 },
+      });
+
+      output.on("close", function () {
+        resolve(zip);
+      });
+
+      archive.pipe(output);
+
+      archive.directory(path, "false");
+      await archive.finalize();
+    });
   }
 }
 

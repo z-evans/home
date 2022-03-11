@@ -29,4 +29,7 @@ export default FileUpload;
 const StyledFileInput = styled("div")`
   border: 1px solid ${Colours.default.ming};
   padding: 2em;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 `;

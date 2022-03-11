@@ -15,15 +15,16 @@ const URLs = {
       User: {
         Register: `${defaultPath}/user/register`,
       },
+      Files: {
+        Info: `${defaultPath}/files`,
+      },
     },
     GET: {
       User: {
         Auth: `${defaultPath}/user`,
         Login: `${defaultPath}/user/login`,
       },
-      Files: {
-        Info: `${defaultPath}/files`,
-      },
+      Files: `${defaultPath}/files`,
     },
     PUT: {
       Files: `${defaultPath}/files`,

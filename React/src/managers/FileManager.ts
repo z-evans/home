@@ -1,5 +1,9 @@
 import axios from "axios";
-import { defaultAxiosConfig, formAxiosConfig } from "../data/Defaults";
+import {
+  blobAxiosConfig,
+  defaultAxiosConfig,
+  formAxiosConfig,
+} from "../data/Defaults";
 import URLs from "../data/URLs";
 import { DropzoneFile, Explorer } from "../types/files";
 import DataManager from "./DataManager";
@@ -15,7 +19,7 @@ class FileManager {
     const path = this.mergePath(p);
     return (
       await axios.post<Explorer>(
-        URLs.API.GET.Files.Info,
+        URLs.API.POST.Files.Info,
         {
           dir: path,
         },
@@ -46,6 +50,16 @@ class FileManager {
         },
       });
     });
+  }
+  async download(dir: string, name: string) {
+    const blob = (
+      await axios.get<Blob>(URLs.API.GET.Files + dir, blobAxiosConfig)
+    ).data;
+    var blobURL = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = blobURL;
+    link.setAttribute("download", name);
+    link.click();
   }
 }
 

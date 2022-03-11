@@ -6,6 +6,7 @@ import { useMountEffect } from "../util/hooks";
 
 interface Props {
   contextRef: React.RefObject<HTMLDivElement>;
+  onDownload: () => void;
 }
 
 const ContextMenu: React.FC<Props> = ({ contextRef, ...props }) => {
@@ -27,10 +28,13 @@ const ContextMenu: React.FC<Props> = ({ contextRef, ...props }) => {
     document.addEventListener("contextmenu", handleContext);
   });
 
-  return <ContextMenuComponent anchorPoint={anchorPoint} show={show} />;
+  return (
+    <ContextMenuComponent {...props} anchorPoint={anchorPoint} show={show} />
+  );
 };
 
 interface Component {
+  onDownload: () => void;
   anchorPoint: {
     x: number;
     y: number;
@@ -38,7 +42,11 @@ interface Component {
   show: boolean;
 }
 
-const ContextMenuComponent: React.FC<Component> = ({ anchorPoint, show }) => (
+const ContextMenuComponent: React.FC<Component> = ({
+  onDownload,
+  anchorPoint,
+  show,
+}) => (
   <>
     {show && (
       <StyledContextMenu
@@ -48,7 +56,7 @@ const ContextMenuComponent: React.FC<Component> = ({ anchorPoint, show }) => (
         }}
       >
         <li>Share...</li>
-        <li>Download</li>
+        <li onClick={() => onDownload()}>Download</li>
         <li>Delete</li>
         <hr className="divider" />
         <li>Refresh</li>

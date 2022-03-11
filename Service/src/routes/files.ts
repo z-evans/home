@@ -1,8 +1,10 @@
+import archiver = require("archiver");
 import * as express from "express";
 import * as formidable from "formidable";
-import { existsSync, mkdirSync, rename } from "fs";
+import { createWriteStream, existsSync, mkdirSync, rename, statSync } from "fs";
 import URLs from "../data/URLs";
 import FileManager from "../managers/FileManager";
+import LogManager from "../managers/LogManager";
 import { FilesGet } from "../types/Files";
 const FileRouter = express.Router();
 
@@ -42,7 +44,20 @@ FileRouter.put("/", async function (req, res, next) {
 FileRouter.post("/", async function (req, res, next) {
   const data = req.body as FilesGet;
   const path = `${URLs.DIR.User(0)}${data.dir}`;
+  if (!existsSync(path)) {
+    mkdirSync(path);
+  }
   res.json(FileManager.list(path));
+});
+
+FileRouter.get("/:dir", async function (req, res, next) {
+  const dir = req.params.dir;
+  const path = `${URLs.DIR.User(0)}/${dir}`;
+  if (statSync(path).isFile()) {
+    res.download(path);
+  } else {
+    res.download(await FileManager.zip(path));
+  }
 });
 
 export default FileRouter;

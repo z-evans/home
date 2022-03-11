@@ -119,6 +119,7 @@ const Component: React.FC<Props> = ({ state, dispatch, onUpload }) => {
         {state.explorer.directories.map((d) => (
           <ExplorerItem
             data={d}
+            path={state.path.join("/")}
             type="Directory"
             onClick={(e) =>
               dispatch({
@@ -131,6 +132,7 @@ const Component: React.FC<Props> = ({ state, dispatch, onUpload }) => {
         {state.explorer.files.map((d) => (
           <ExplorerItem
             data={d}
+            path={state.path.join("/")}
             type="File"
             onClick={() => {
               //
