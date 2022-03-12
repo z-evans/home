@@ -47,3 +47,8 @@ export function fileReducer(state: FileState, action: FileActions): FileState {
       return { ...state, progress: action.payload as number };
   }
 }
+
+export interface RenameProps {
+  name: string;
+  rename: string;
+}

@@ -13,3 +13,8 @@ export interface Explorer {
   directories: ExplorerItem[];
   files: ExplorerItem[];
 }
+
+export interface RenameProps {
+  name: string;
+  rename: string;
+}

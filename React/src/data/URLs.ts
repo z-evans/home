@@ -17,6 +17,7 @@ const URLs = {
       },
       Files: {
         Info: `${defaultPath}/files`,
+        Rename: `${defaultPath}/files/rename`,
       },
     },
     GET: {
@@ -27,6 +28,9 @@ const URLs = {
       Files: `${defaultPath}/files`,
     },
     PUT: {
+      Files: `${defaultPath}/files`,
+    },
+    DELETE: {
       Files: `${defaultPath}/files`,
     },
   },

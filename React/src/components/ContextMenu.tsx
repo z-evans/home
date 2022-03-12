@@ -1,5 +1,3 @@
-import { faFile, faFolder } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import styled from "styled-components";
 import { useMountEffect } from "../util/hooks";
@@ -7,6 +5,8 @@ import { useMountEffect } from "../util/hooks";
 interface Props {
   contextRef: React.RefObject<HTMLDivElement>;
   onDownload: () => void;
+  onDelete: () => void;
+  onRename: () => void;
 }
 
 const ContextMenu: React.FC<Props> = ({ contextRef, ...props }) => {
@@ -35,6 +35,8 @@ const ContextMenu: React.FC<Props> = ({ contextRef, ...props }) => {
 
 interface Component {
   onDownload: () => void;
+  onDelete: () => void;
+  onRename: () => void;
   anchorPoint: {
     x: number;
     y: number;
@@ -44,6 +46,8 @@ interface Component {
 
 const ContextMenuComponent: React.FC<Component> = ({
   onDownload,
+  onDelete,
+  onRename,
   anchorPoint,
   show,
 }) => (
@@ -56,8 +60,9 @@ const ContextMenuComponent: React.FC<Component> = ({
         }}
       >
         <li>Share...</li>
-        <li onClick={() => onDownload()}>Download</li>
-        <li>Delete</li>
+        <li onClick={onDownload}>Download</li>
+        <li onClick={onDelete}>Delete</li>
+        <li onClick={onRename}>Rename</li>
         <hr className="divider" />
         <li>Refresh</li>
       </StyledContextMenu>

@@ -14,9 +14,6 @@ const Nav: React.FC = () => {
   return (
     <StyledNav>
       <ul>
-        <li>
-          <FontAwesomeIcon icon={faHome} />
-        </li>
         <li onClick={() => history.push(URLs.PAGE.Dashboard.Files)}>
           <FontAwesomeIcon icon={faFile} />
         </li>

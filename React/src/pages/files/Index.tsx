@@ -27,6 +27,10 @@ const FilesIndex = () => {
       payload: await FileManager.getFiles(state.path),
     });
 
+  const delayedLoad = () => {
+    setTimeout(() => loadData(), 1000);
+  };
+
   console.log(state);
 
   useMountEffect(() => {
@@ -67,8 +71,11 @@ const FilesIndex = () => {
             });
           }
         });
-
-        setTimeout(() => loadData(), 1000);
+        delayedLoad();
+      }}
+      onRename={(name, rename) => {
+        FileManager.rename(name, rename);
+        delayedLoad();
       }}
     />
   );
@@ -78,9 +85,15 @@ interface Props {
   state: FileState;
   dispatch: React.Dispatch<FileActions>;
   onUpload: (files: File[]) => void;
+  onRename: (name: string, rename: string) => void;
 }
 
-const Component: React.FC<Props> = ({ state, dispatch, onUpload }) => {
+const Component: React.FC<Props> = ({
+  state,
+  dispatch,
+  onUpload,
+  onRename,
+}) => {
   return (
     <DefaultScreen>
       <DirectoryBar>
@@ -127,6 +140,7 @@ const Component: React.FC<Props> = ({ state, dispatch, onUpload }) => {
                 payload: [...state.path, e],
               })
             }
+            onRename={onRename}
           />
         ))}
         {state.explorer.files.map((d) => (
@@ -137,6 +151,7 @@ const Component: React.FC<Props> = ({ state, dispatch, onUpload }) => {
             onClick={() => {
               //
             }}
+            onRename={onRename}
           />
         ))}
       </FileUpload>

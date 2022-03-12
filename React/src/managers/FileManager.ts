@@ -5,7 +5,7 @@ import {
   formAxiosConfig,
 } from "../data/Defaults";
 import URLs from "../data/URLs";
-import { DropzoneFile, Explorer } from "../types/files";
+import { DropzoneFile, Explorer, RenameProps } from "../types/files";
 import DataManager from "./DataManager";
 
 type Progress = (p: number) => void;
@@ -60,6 +60,15 @@ class FileManager {
     link.href = blobURL;
     link.setAttribute("download", name);
     link.click();
+  }
+  async delete(dir: string) {
+    await axios.delete(URLs.API.DELETE.Files + dir);
+  }
+  async rename(name: string, rename: string) {
+    await axios.post(URLs.API.POST.Files.Rename, {
+      name,
+      rename,
+    } as RenameProps);
   }
 }
 

@@ -1,11 +1,19 @@
 import archiver = require("archiver");
 import * as express from "express";
 import * as formidable from "formidable";
-import { createWriteStream, existsSync, mkdirSync, rename, statSync } from "fs";
+import {
+  createWriteStream,
+  existsSync,
+  mkdirSync,
+  rename,
+  renameSync,
+  statSync,
+  unlinkSync,
+} from "fs";
 import URLs from "../data/URLs";
 import FileManager from "../managers/FileManager";
 import LogManager from "../managers/LogManager";
-import { FilesGet } from "../types/Files";
+import { FilesGet, RenameProps } from "../types/Files";
 const FileRouter = express.Router();
 
 /* GET home page. */
@@ -57,6 +65,28 @@ FileRouter.get("/:dir", async function (req, res, next) {
     res.download(path);
   } else {
     res.download(await FileManager.zip(path));
+  }
+});
+
+FileRouter.delete("/:dir", async function (req, res, next) {
+  const dir = req.params.dir;
+  const path = `${URLs.DIR.User(0)}/${dir}`;
+  try {
+    unlinkSync(path);
+  } catch (e) {
+    res.status(500).send(e);
+  }
+});
+
+FileRouter.post("/rename", async function (req, res, next) {
+  const props = req.body as RenameProps;
+  const path = `${URLs.DIR.User(0)}/${props.name}`;
+  const renamed = `${URLs.DIR.User(0)}/${props.rename}`;
+  try {
+    renameSync(path, renamed);
+    res.send();
+  } catch (e) {
+    res.status(500).send(e);
   }
 });
 
