@@ -1,13 +1,19 @@
 import { faFile, faFolder } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect } from "react";
-import { useRef, useState } from "react";
+import { useEffect, useReducer } from "react";
+import { useRef } from "react";
 import styled from "styled-components";
 import DataManager from "../../managers/DataManager";
 import FileManager from "../../managers/FileManager";
 import OnInput from "../../managers/handler/OnInput";
 import Colours from "../../style/Colours";
 import { DirectoryItem } from "../../types/files";
+import {
+  ItemActions,
+  itemReducer,
+  ItemState,
+} from "../../types/files/ExplorerItem";
+import { useMountEffect } from "../../util/hooks";
 import ContextMenu from "../ContextMenu";
 import Textbox from "../inputs/Textbox";
 
@@ -15,115 +21,137 @@ interface Props {
   data: DirectoryItem;
   type: "Directory" | "File";
   path: string;
+  selected: boolean;
   onClick: (path: string) => void;
   onRename: (name: string, rename: string) => void;
+  onSelect: (e: string) => void;
 }
 
 const ExplorerItem: React.FC<Props> = ({ ...props }) => {
-  const contextRef = useRef<HTMLDivElement>(null);
-  const inputContainerRef = useRef<HTMLDivElement>(null);
-  const [renaming, setRenaming] = useState<boolean | undefined>(false);
-  const [name, setName] = useState<string | undefined>(undefined);
-  const fileName = `${props.data.name}${
-    props.type === "File" ? props.data.extention : ""
-  }`;
+  const [state, dispatch] = useReducer(itemReducer, {
+    contextRef: useRef<HTMLDivElement>(null),
+    inputContainerRef: useRef<HTMLDivElement>(null),
+    selectRef: useRef<HTMLDivElement>(null),
+    renaming: false,
+    name: undefined,
+    fileName: `${props.data.name}${
+      props.type === "File" ? props.data.extention : ""
+    }`,
+  });
 
   const onRename = (name: string, rename: string) => {
     if (rename !== name) {
       props.onRename(name, rename);
     }
-    setRenaming(false);
+    dispatch({ type: "SET_RENAMING", payload: false });
   };
 
   const handleInput = (e: MouseEvent) => {
     document.removeEventListener("click", handleInput);
     if (
-      inputContainerRef.current &&
-      !inputContainerRef.current.contains(e.target as Node) &&
-      renaming
+      state.inputContainerRef.current &&
+      !state.inputContainerRef.current.contains(e.target as Node) &&
+      state.renaming
     ) {
-      onRename(props.path + "/" + fileName, props.path + "/" + name);
-      setRenaming(false);
-    } else if (renaming === undefined) {
-      setRenaming(true);
+      onRename(
+        props.path + "/" + state.fileName,
+        props.path + "/" + state.name
+      );
+      dispatch({ type: "SET_RENAMING", payload: false });
+    } else if (state.renaming === undefined) {
+      dispatch({ type: "SET_RENAMING", payload: true });
+    }
+  };
+
+  const handleSelect = (e: MouseEvent) => {
+    if (
+      state.contextRef.current?.contains(e.target as Node) &&
+      !state.selectRef.current?.contains(e.target as Node) &&
+      !state.renaming
+    ) {
+      props.onClick(props.data.name);
     }
   };
 
   useEffect(() => {
     document.addEventListener("click", handleInput);
-  }, [renaming]);
+  }, [state.renaming]);
+
+  useMountEffect(() => {
+    document.addEventListener("click", handleSelect);
+  });
 
   return (
     <ExplorerItemComponent
       {...props}
-      contextRef={contextRef}
-      inputContainerRef={inputContainerRef}
-      renaming={renaming}
-      name={name}
-      fileName={fileName}
-      setName={setName}
-      setRenaming={setRenaming}
+      state={state}
+      dispatch={dispatch}
       onRename={(name, rename) => onRename(name, rename)}
     />
   );
 };
 
 interface Component extends Props {
-  contextRef: React.RefObject<HTMLDivElement>;
-  inputContainerRef: React.RefObject<HTMLDivElement>;
-  renaming: boolean | undefined;
-  name: string | undefined;
-  fileName: string;
-  setName: React.Dispatch<React.SetStateAction<string | undefined>>;
-  setRenaming: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  state: ItemState;
+  dispatch: React.Dispatch<ItemActions>;
   onRename: (name: string, rename: string) => void;
 }
 
 const ExplorerItemComponent: React.FC<Component> = ({
-  contextRef,
-  inputContainerRef,
+  state,
   data,
   type,
   path,
-  renaming,
-  name,
-  fileName,
+  selected,
+  dispatch,
   onClick,
-  setRenaming,
-  setName,
   onRename,
+  onSelect,
 }) => {
   return (
     <>
       <ContextMenu
-        contextRef={contextRef}
-        onDownload={() => FileManager.download(path + "/" + fileName, fileName)}
-        onDelete={() => FileManager.delete(path + "/" + fileName)}
+        contextRef={state.contextRef}
+        onDownload={() =>
+          FileManager.download(path + "/" + state.fileName, state.fileName)
+        }
+        onDelete={() => FileManager.delete(path + "/" + state.fileName)}
         onRename={() => {
-          setName(fileName);
-          setRenaming(undefined);
+          dispatch({ type: "SET_NAME", payload: state.fileName });
+          dispatch({ type: "SET_RENAMING", payload: undefined });
         }}
       />
       <StyledExplorerItem
-        ref={contextRef}
+        ref={state.contextRef}
         onContextMenu={(e) => {
           e.preventDefault();
         }}
-        onClick={() => !renaming && onClick(data.name)}
       >
         <div>
+          <div ref={state.selectRef}>
+            <input
+              type={"checkbox"}
+              onChange={() => onSelect(state.fileName)}
+              checked={selected}
+            />
+          </div>
           <FontAwesomeIcon
             className="icon"
             icon={type === "Directory" ? faFolder : faFile}
           />
-          <div ref={inputContainerRef}>
-            {renaming === undefined || renaming ? (
+          <div ref={state.inputContainerRef}>
+            {state.renaming === undefined || state.renaming ? (
               <Textbox
-                value={name}
-                onChange={(e) => setName(e.currentTarget.value)}
+                value={state.name}
+                onChange={(e) =>
+                  dispatch({ type: "SET_NAME", payload: e.currentTarget.value })
+                }
                 onKeyPress={(e) =>
                   OnInput.enter(e, () =>
-                    onRename(path + "/" + fileName, path + "/" + name)
+                    onRename(
+                      path + "/" + state.fileName,
+                      path + "/" + state.name
+                    )
                   )
                 }
                 autoFocus
@@ -135,7 +163,7 @@ const ExplorerItemComponent: React.FC<Component> = ({
                 }
               />
             ) : (
-              <span className="name">{fileName}</span>
+              <span className="name">{state.fileName}</span>
             )}
           </div>
         </div>

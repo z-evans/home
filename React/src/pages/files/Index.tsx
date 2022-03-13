@@ -2,8 +2,7 @@ import { faHome } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useReducer } from "react";
 import styled from "styled-components";
-import ExplorerItem from "../../components/files/ExplorerItem";
-import FileUpload from "../../components/inputs/FileUpload";
+import FileDirectory from "../../components/files/FileDirectory";
 import DefaultScreen from "../../components/layouts/DefaultScreen";
 import FileManager from "../../managers/FileManager";
 import { FileActions, fileReducer, FileState } from "../../types/files";
@@ -127,34 +126,12 @@ const Component: React.FC<Props> = ({
           // Recent Files
         }
       </div>
-      <FileUpload onSelect={onUpload}>
-        {state.uploading && state.progress}
-        {state.explorer.directories.map((d) => (
-          <ExplorerItem
-            data={d}
-            path={state.path.join("/")}
-            type="Directory"
-            onClick={(e) =>
-              dispatch({
-                type: "SET_PATH",
-                payload: [...state.path, e],
-              })
-            }
-            onRename={onRename}
-          />
-        ))}
-        {state.explorer.files.map((d) => (
-          <ExplorerItem
-            data={d}
-            path={state.path.join("/")}
-            type="File"
-            onClick={() => {
-              //
-            }}
-            onRename={onRename}
-          />
-        ))}
-      </FileUpload>
+      <FileDirectory
+        state={state}
+        dispatch={dispatch}
+        onRename={onRename}
+        onUpload={onUpload}
+      />
     </DefaultScreen>
   );
 };

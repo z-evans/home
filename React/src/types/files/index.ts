@@ -1,13 +1,3 @@
-export interface FileActions {
-  type:
-    | "SET_PATH"
-    | "SET_RECENT"
-    | "SET_EXPLORER"
-    | "SET_UPLOADING"
-    | "SET_PROGRESS";
-  payload: string[] | File[] | Explorer | number | boolean;
-}
-
 export interface DropzoneFile extends File {
   path: string;
   dir: string;
@@ -31,6 +21,16 @@ export interface FileState {
   progress: number;
   recentFiles: File[];
   explorer: Explorer;
+}
+
+export interface FileActions {
+  type:
+    | "SET_PATH"
+    | "SET_RECENT"
+    | "SET_EXPLORER"
+    | "SET_UPLOADING"
+    | "SET_PROGRESS";
+  payload: string[] | File[] | Explorer | number | boolean;
 }
 
 export function fileReducer(state: FileState, action: FileActions): FileState {
