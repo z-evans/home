@@ -1,7 +1,7 @@
 # home
 Software thats under development to replace local nextcloud software and note / task tracker software that was made with PHP & JQuery.
     
-###### March development
+###### Development List
 - [x] Improved upload
 - [x] Download feature
   - [ ] Multiple 
@@ -14,3 +14,5 @@ Software thats under development to replace local nextcloud software and note / 
 - [ ] UI + UX Improvements
   - [ ] Loading
   - [ ] Styling improvements
+
+(Due to work / uni commitments. Development will be slowed down)
